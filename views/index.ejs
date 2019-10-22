@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>pay Page</title>
+  </head>
+  <body>
+
+<h1>
+  <% if(order){%>
+    <%= order.hash %>
+  <% }%>
+</h1>
+
+<a target="_blank" href="<%= hppUrl %>"> Click to check Hosted Payment Page Form </a>
+<!-- <form class="" action="/auth/login" method="post">
+  <input type="text" name="username" value=""><br>
+  <input type="password" name="password" value=""><br>
+  <input type="submit"  value="Login">
+</form> -->
+<script id="kashier-iFrame"
+src="<%= order.baseUrl%>/js/kashier-checkout.js"
+data-amount="<%=order.amount%>"
+data-description="description"
+data-hash="<%=order.hash%>"
+data-currency="<%=order.currency%>"
+data-orderId="<%=order.merchantOrderId%>"
+data-merchantId="<%=order.mid%>"
+data-merchantRedirect="http://localhost:9000/callback"
+data-store = "essam"
+data-type = "external" data-display="en" >
+ </script> 
+</body>
+
+</html>

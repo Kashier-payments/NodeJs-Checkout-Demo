@@ -14,10 +14,8 @@
         }
       }
            if (window.addEventListener) {
-             console.log("if");
              addEventListener("message", responseCallBack, false)
          } else {
-          console.log("else");     
              attachEvent("onmessage", responseCallBack)
          }
       </script>

@@ -13,11 +13,22 @@ server.set("views", "./views");
 server.get("/callback", [urlEncodedMid], function (req, res, next) {
     if (req.query.signature) {
         if (validateSignature(req.query, configObj.iFrameSecret))
-            res.send("success");
+            res.send("success signature");
         else
             res.send("not matched signature")
     } else {
-        res.send("success");
+        res.send("success signature");
+    }
+})
+
+server.get("/hppCallback", [urlEncodedMid], function (req, res, next) {
+    if (req.query.signature) {
+        if (validateSignature(req.query, configObj.HPPSecret))
+            res.send("success signature");
+        else
+            res.send("not matched signature")
+    } else {
+        res.send("success signature");
     }
 })
 
@@ -38,8 +49,7 @@ server.get("/", [], function (req, res, next) {
 
     // generate HPP hash  
     let phash = generateKashierOrderHash(order);
-    console.log(phash);
-    let callbackUrl = encodeURI('http://google.com');
+    let callbackUrl = encodeURI('http://localhost:9000/hppCallback');
 
     //Hosted payment page URL
     let hppUrl = `${configObj.baseUrl}/payment?mid=${order.mid}&orderId=${order.merchantOrderId}&amount=${order.amount}&currency=${order.currency}&hash=${phash}&merchantRedirect=${callbackUrl}`

@@ -4,8 +4,23 @@
     <meta charset="utf-8">
     <title>pay Page</title>
     <script>
-
-    </script>
+        function responseCallBack(e){ 
+        if(e.data.message== "success"){
+            console.log("Success payment", e.data )
+        }else if(e.data.message == "failure"){
+            console.log("Failure payment", e.data )
+        }else{
+            console.log("Other Actions", e.data )
+        }
+      }
+           if (window.addEventListener) {
+             console.log("if");
+             addEventListener("message", responseCallBack, false)
+         } else {
+          console.log("else");     
+             attachEvent("onmessage", responseCallBack)
+         }
+      </script>
   </head>
   <body>
 
@@ -21,24 +36,7 @@
   <input type="password" name="password" value=""><br>
   <input type="submit"  value="Login">
 </form> -->
-<script>
-  function responseCallBack(e){ 
-  if(e.data.message== "success"){
-      console.log("Success payment", e.data )
-  }else if(e.data.message == "failure"){
-      console.log("Failure payment", e.data )
-  }else{
-      console.log("Other Actions", e.data )
-  }
-}
-     if (window.addEventListener) {
-       console.log("if");
-       addEventListener("message", responseCallBack, false)
-   } else {
-    console.log("else");     
-       attachEvent("onmessage", responseCallBack)
-   }
-</script>
+
 <script id="kashier-iFrame"
 src="<%= order.baseUrl%>/js/kashier-checkout.js"
 data-amount="<%=order.amount%>"

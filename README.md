@@ -25,11 +25,13 @@ Create and pay orders through IFrame and Hosted Payment Page in Nodejs.
 
 ## Signature validation
 
-## fetch order
+## Get Order API
+
+Get Order by your Merchant Order id
+
     GET https://test-api.kashier.io/payments/orders/${yourMerchantOrderID}
     {
     "response": {
-        "_id": "5eb33aaceef9a8002b6d39f5",
         "merchantId": "MID-41-571",
         "merchantOrderId": "5eb0e0e0b380b80048806a42",
         "totalRefundedAmount": 0,
@@ -62,20 +64,24 @@ Create and pay orders through IFrame and Hosted Payment Page in Nodejs.
             "amount": "8889.00",
             "currency": "EGP"
         }
-    },
+     },
     "status": "SUCCESS"
-}
+    }
+    
+Successfully Paid Order
 
-### Successfully Paid Order
     response.status = "CAPTURED"
     
-#### Transaction detail
+Fetch Paid Transaction
+
     response.transactions[].status = "SUCCESS" && response.transactions[].operation = "pay"
   
-### Failed Order
+Failed Order
+
     response.status = "FAILED"
     
-#### Transaction detail
+Fetch Failed Transaction
+
     response.transactions[].status = "FAILURE" && response.transactions[].operation = "pay"
 
 

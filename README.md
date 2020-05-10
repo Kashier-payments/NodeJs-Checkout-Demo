@@ -25,11 +25,49 @@ Create and pay orders through IFrame and Hosted Payment Page in Nodejs.
 
 ## Signature validation
 
+## API Authentication 
+### Secret Keys
+### JWT
+
+Authenticate using
+
+    POST https://test-api.kashier.io/authenticate
+    BODY  {
+          "userType": "merchant",
+          "password": "Your Password",
+          "email": "Your EMail"
+          }
+Authentication Response 
+
+    {
+         "response": {
+         "accessToken":"access_token",
+         "refreshToken":"refresh_token",
+         "currentMerchantPayformanceId": "merchant_id"
+         },
+         
+         "messages": {
+           "en": "You have logged in successfully",
+           "ar": "(Needs translation) You have logged in successfully"
+          },
+          
+    "status": "SUCCESS"
+    
+    }
+    
+Future Authorized Requests should have the following header keys
+
+    authmerchantid: merchant_id
+    authorization: access_token
+    
 ## Get Order API
 
 Get Order by your Merchant Order id
 
     GET https://test-api.kashier.io/payments/orders/${yourMerchantOrderID}
+
+Response 
+
     {
     "response": {
         "merchantId": "MID-41-571",

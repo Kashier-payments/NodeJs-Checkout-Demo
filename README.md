@@ -103,7 +103,7 @@ Response
             "currency": "EGP"
         }
      },
-    "status": "SUCCESS"
+        "status": "SUCCESS"
     }
     
 Successfully Paid Order

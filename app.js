@@ -37,8 +37,9 @@ server.get('/', [], function (req, res, next) {
     baseUrl: configObj.baseUrl,
     //order meta data JSON String
     metaData: JSON.stringify({
-      'Product Name': 'Type Cable',
-      'Product Description': 'Warranty 2 years.',
+      'Customer Name': 'Mohamed Khaled',
+      'Cutomer Phone': '+20100XXX',
+      'Cutomer Email': 'mkhalid@kashier.io',
     }),
     //Add merchantRedirect, to redirect to it after making payment.
     merchantRedirect: 'http://localhost:9000/callback',
@@ -53,10 +54,10 @@ server.get('/', [], function (req, res, next) {
     //Add the following options separated by comma remove or leave empty for all allowed methods.
     //,allowedMethods:"card,wallet,bank_installments"
     allowedMethods: 'bank_installments,card',
-    // Add the following your brand color by passing hexadecimal color as brandColor= encodeURIComponent("#0"),
-    // Also you can set opacity by setting rgba as brandColor= encodeURIComponent("rgba(255, 0, 0, 0.3)")
+    // Add the following your brand color by passing hexadecimal color as brandColor= encodeURIComponent("#A30000"),
+    // Also you can set opacity by setting rgba as brandColor= encodeURIComponent("rgba(163, 0, 0, 1)")
     // By default the branding color is rgba(45, 164, 78, 0.9)
-    brandColor: 'rgba(255, 0, 0, 0.3)',
+    brandColor: 'rgba(163, 0, 0, 1)',
   };
 
   //Generate Order Hash

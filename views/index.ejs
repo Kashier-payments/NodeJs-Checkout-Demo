@@ -1,48 +1,53 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+  <!-- begin::Head -->
+
   <head>
-    <meta charset="utf-8">
+    <meta name="description" content="Latest updates and statistic charts" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="Content-Type" content="text/html" charset=utf-8"/>
+
     <title>pay Page</title>
     <script>
-        function responseCallBack(e){ 
-        if(e.data.message== "success"){
-            console.log("Success payment", e.data )
-        }else if(e.data.message == "failure"){
-            console.log("Failure payment", e.data )
-        }else{
-            //console.log("Other Actions", e.data )
+      function responseCallBack(e) {
+        if (e.data.message == 'success') {
+          console.log('Success payment', e.data);
+
+          //END Redirect with post script
+        } else if (e.data.message == 'failure') {
+          console.log('Failure payment', e.data);
         }
       }
-           if (window.addEventListener) {
-             addEventListener("message", responseCallBack, false)
-         } else {
-             attachEvent("onmessage", responseCallBack)
-         }
-      </script>
+      if (window.addEventListener) {
+        addEventListener('message', responseCallBack, false);
+      } else {
+        attachEvent('onmessage', responseCallBack);
+      }
+    </script>
   </head>
   <body>
+    <div>
+      <a href="<%=hppUrl%>" target="_blank">Hosted Checkout</a><br />
+      <label><%=hppUrl%></label>
 
-<h1>
-  <% if(order){%>
-    <%= order.hash %>
-  <% }%>
-</h1>
-
-<a target="_blank" href="<%= hppUrl %>"> Click to check Hosted Payment Page Form </a>
-
-<script id="kashier-iFrame"
-src="<%= order.baseUrl%>/js/kashier-checkout.js"
-data-amount="<%=order.amount%>"
-data-description="description"
-data-hash="<%=order.hash%>"
-data-currency="<%=order.currency%>"
-data-orderId="<%=order.merchantOrderId%>"
-data-merchantId="<%=order.mid%>"
-data-merchantRedirect="http://localhost:9000/callback"
-data-store = "essam"
-data-type = "external" data-display="en" >
-
- </script> 
-</body>
-
+      <script
+        id="kashier-iFrame"
+        src="<%=configObj.baseUrl%>/kashier-checkout.js"
+        data-amount="<%=order.amount%>"
+        data-hash="<%=order.hash%>"
+        data-currency="<%=order.currency%>"
+        data-orderId="<%=order.merchantOrderId%>"
+        data-merchantId="<%=order.mid%>"
+        data-merchantRedirect="<%=order.merchantRedirect%>"
+        data-display="<%=order.display%>"
+        data-mode="<%=configObj.mode%>"
+        data-metaData="<%=order.metaData%>"
+        data-redirectMethod="<%=order.redirectMethod%>"
+        data-failureRedirect="<%=order.failureRedirect%>"
+        data-allowedMethods="<%=order.allowedMethods%>"
+        data-brandcolor="rgba(255, 0, 0, 0.3)"
+      ></script>
+    </div>
+  </body>
 </html>

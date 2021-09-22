@@ -1,61 +1,95 @@
-const express = require("express");
+const express = require('express');
 const server = express();
 const { generateKashierOrderHash, validateSignature } = require('./backend');
-const bodyParser = require("body-parser");
-const urlEncodedMid = bodyParser.urlencoded({ extended: true });
-const config = require("./config");
-const configObj = config[config.mode]; 
+const bodyParser = require('body-parser');
+const path = require('path');
 
-server.set("view engine", "ejs");
-server.set("views", "./views");
+server.set('view engine', 'ejs');
+server.set('views', './views');
 
-// handle iframe callback
-server.get("/callback", [urlEncodedMid], function (req, res, next) {
-    if (req.query.signature) {
-        if (validateSignature(req.query, configObj.iFrameSecret))
-            res.send("success signature");
-        else
-            res.send("not matched signature")
-    } else {
-        res.send("success signature");
-    }
-})
+server.use(express.static(path.join(__dirname, 'kashier-files')));
+server.use(bodyParser.urlencoded({ extended: false }));
+server.use(bodyParser.json());
 
-server.get("/hppCallback", [urlEncodedMid], function (req, res, next) {
-    if (req.query.signature) {
-        if (validateSignature(req.query, configObj.HPPSecret))
-            res.send("success signature");
-        else
-            res.send("not matched signature")
-    } else {
-        res.send("success signature");
-    }
-})
+server.use('/callback', require('./callBacks'));
+server.use('/PaymentWebhook', require('./PaymentWebhook'));
 
-//render index.ejs
-server.get("/", [], function (req, res, next) {
-    let order = {
-        amount: 20.00,
-        currency: "EGP",
-        merchantOrderId: Date.now(),
-        mid: configObj.mid,
-        secret: configObj.iFrameSecret,
-        baseUrl: configObj.baseUrl,
-    }
+//Order Configuration and index.js rendering.
+server.get('/', [], function (req, res, next) {
+  //Import merchant configuration
+  const config = require('./config');
+  const configObj = config[config.mode];
 
-    // generate iframe hash
-    order.hash = generateKashierOrderHash(order);
-    order.secret = configObj.HPPSecret;
+  //Create your Order
+  let order = {
+    amount: '600.00',
+    // Add following option to specific order currency (ISO: "EGP", "USD", "GBP" "EUR")
+    currency: 'EGP',
+    // Unique order using as reference between merchant and kashier
+    merchantOrderId: Date.now(),
+    // Your Kashier Merchant ID 'MID-XXX-XX'
+    mid: configObj.mid,
+    // How to obtain your Payment API key
+    // Navigate to Integrate now page
+    // Click on Generate for Customizable form service
+    secret: configObj.PaymentApiKey,
+    // your website baseUrl, www.yourwebsite.com
+    baseUrl: configObj.baseUrl,
+    //order meta data JSON String
+    metaData: JSON.stringify({
+      'Customer Name': 'Mohamed Khaled',
+      'Cutomer Phone': '+20100XXX',
+      'Cutomer Email': 'mkhalid@kashier.io',
+    }),
+    //Add merchantRedirect, to redirect to it after making payment.
+    merchantRedirect: 'http://localhost:9000/callback',
+    //Add display, to choose what the display language do you want ar for arabic and en for english.
+    display: 'ar',
+    //Add failureRedirect, to choose to redirect after first payment failiure or not.
+    //, failureRedirect: 'false || true'
+    failureRedirect: 'true',
+    //Add redirectMethod the callback redirection method after payment, using get or post formdata redirection
+    //, redirectMethod: 'post || get'
+    redirectMethod: 'get',
+    //Add the following options separated by comma remove or leave empty for all allowed methods.
+    //,allowedMethods:"card,wallet,bank_installments"
+    allowedMethods: 'bank_installments,card',
+    // Add the following your brand color by passing hexadecimal color as brandColor= encodeURIComponent("#A30000"),
+    // Also you can set opacity by setting rgba as brandColor= encodeURIComponent("rgba(163, 0, 0, 1)")
+    // By default the branding color is rgba(45, 164, 78, 0.9)
+    brandColor: 'rgba(163, 0, 0, 1)',
+  };
 
-    // generate HPP hash  
-    let phash = generateKashierOrderHash(order);
-    let callbackUrl = encodeURI('http://localhost:9000/hppCallback');
+  //Generate Order Hash
+  order.hash = generateKashierOrderHash(order);
 
-    //Hosted payment page URL
-    let hppUrl = `${configObj.baseUrl}/payment?mid=${order.mid}&orderId=${order.merchantOrderId}&amount=${order.amount}&currency=${order.currency}&hash=${phash}&merchantRedirect=${callbackUrl}`
-    res.render('index', { order: order, hppUrl: hppUrl });
-})
+  //Formulate Hosted payment page URL
+  let hppUrl =
+    `${configObj.baseUrl}?` +
+    `merchantId=${order.mid}` +
+    `&orderId=${order.merchantOrderId}` +
+    `&amount=${order.amount}` +
+    `&currency=${order.currency}` +
+    `&hash=${order.hash}` +
+    `&merchantRedirect=${order.merchantRedirect}` +
+    `&metaData=${order.metaData ? order.metaData : ''}` +
+    `&allowedMethods=${order.allowedMethods ? order.allowedMethods : ''}` +
+    `&failureRedirect=${order.failureRedirect ? order.failureRedirect : ''}` +
+    `&redirectMethod=${order.redirectMethod ? order.redirectMethod : ''}` +
+    `&display=${order.display ? order.display : ''}` +
+    `&brandColor=${encodeURIComponent(order.brandColor)}` +
+    `&mode=${configObj.mode}`;
+
+  res.render('index', {
+    order: order,
+    hppUrl: hppUrl,
+    configObj: {
+      mode: configObj.mode,
+      baseUrl: configObj.baseUrl,
+    },
+  });
+});
 
 server.listen(9000, function () {
-    console.log("server is running.....");
+  console.log('server is running.....');
 });
